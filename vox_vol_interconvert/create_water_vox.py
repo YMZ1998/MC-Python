@@ -12,15 +12,20 @@ WaterMaterialId = 2  # Material index in .in file
 
 for WaterThickness in range(11, 21):  # cm
     # The water plate.
-    ModelX = 128  # 4cm
+    ModelX = 32  # 4cm
     ModelY = int(WaterThickness / VoxelSize)
-    ModelZ = 128
+    ModelZ = 32
     vol = np.ones((VoxX, VoxY, VoxZ), dtype=int)
     xl = (VoxX - ModelX) // 2
     yl = (VoxY - ModelY) // 2
     zl = (VoxZ - ModelZ) // 2
 
+    print(xl, yl, zl)
+    print(xl + ModelX, yl + ModelY, zl + ModelZ)
+
     vol[xl:xl + ModelX, yl:yl + ModelY, zl:zl + ModelZ] = WaterMaterialId
+
+    print(np.min(vol), np.max(vol))
 
     voxFile = ""
     voxFile += "[SECTION VOXELS phantomER]\n{} {} {} No. OF VOXELS IN X,Y,Z\n{} {} {} VOXEL SIZE (cm) ALONG X,Y,Z\n".format(
@@ -36,7 +41,7 @@ for WaterThickness in range(11, 21):  # cm
     # Save corresponding .raw volume.
     # Use ImageJ Volume Viewer to display.
     # Ray points to +y in ImageJ coordinate when "0.0 1.0 0.0  # SOURCE DIRECTION COSINES: U V W"
-    with open('WaterPhantom.raw', 'wb') as fp:
+    with open(f'WaterPhantom_{WaterThickness}.raw', 'wb') as fp:
         fp.write(vol.astype(np.uint8).tobytes())
 
     # Generate .vox file.
